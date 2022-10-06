@@ -1,11 +1,6 @@
-## My Project
+## Proof Skeletons for (UN)SAT
 
-TODO: Fill this README out!
-
-Be sure to:
-
-* Change the title in this README
-* Edit your repository description on GitHub
+This repository contains a toolchain for compressing [DRAT proofs of unsatisfiability](https://arxiv.org/pdf/1610.06229.pdf) as produced by state-of-the-art [SAT solvers](https://en.wikipedia.org/wiki/Boolean_satisfiability_problem).
 
 ## Security
 
