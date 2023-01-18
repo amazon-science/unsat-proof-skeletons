@@ -5,16 +5,15 @@
 
 ## Usage
 
-Build the main executable by running `g++ --std=c++11 lrat-mapper/src/main.cpp -o lrat-map -Ilrat-mapper/include/ -Ilrat-mapper/third-party/cli11/`
+Build the main executable by running `g++ --std=c++11 lrat-mapper/src/main.cpp -o lrat-map -Ilrat-mapper/include/`
 
-Run with `> ./lrat-map <chunkLRATFolder> <skeletonMap> <nFormulaClauses> <nSkeletonClauses> <nChunks> > <combinedProof>`
+Run with `> ./lrat-map -proof <chunkLRATFolder> -map <skeletonMap> -nFormula <nFormulaClauses> -nSkeleton <nSkeletonClauses> -nChunks <nChunks>`
 
 * `chunkLRATFolder` - the folder containing the chunk LRAT proofs named `0.lrat` through `(nChunks-1).lrat`. This folder is typically `icad-proofs`, a default in `skeleton2lrat.py`.
 * `skeletonMap` - the file containing the mapping between skeleton clauses and LRAT ids. This mapping is typically output from a call to `drat-trim` in `skeleton2lrat.py`, to location `icad-out/<formulaName>-lrat-map.log`
 * `nFormulaClause` - number of clauses in the original formula
 * `nSkeletonClause` - number of clauses in the skeleton
 * `nChunks` - number of chunk LRAT proofs to be combined
-* `combinedProof` - file name for combined proof to be written to
 
 ## Description
 

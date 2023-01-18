@@ -104,6 +104,8 @@ void Proof::add_derived_clause (Clause * c) {
 }
 
 void Proof::delete_clause (Clause * c) {
+  if (!c->redundant) return;
+  
   LOG (c, "PROOF deleting from proof");
   assert (clause.empty ());
   add_literals (c);

@@ -4,8 +4,6 @@
 #include <algorithm>
 #include <unordered_set>
 
-#include "CLI11.hpp"
-
 #include "drat_parse.h"
 
 using namespace dratparse;
@@ -298,57 +296,61 @@ private:
 
 };
 
+char* commandLineParseOption(char ** start, char ** end, const string & marker) {
+  char ** position = std::find(start,end,marker);
+  if ( position == end || ++position == end) return 0;
+  return *position;
+}
+
+void printHelp(char ** start, char ** end) {
+  char ** position = std::find(start,end,"-h");
+  if ( position == end ) return;
+  
+  cout << "lrat-skeleton: Parse LRAT proof and write skeleton (in plain text)." << endl;
+  cout << "Options (required for writing skeleton):" << endl;
+  cout << "-proof <FILE> : Path to LRAT proof." << endl;
+  cout << "-nFormula <INT> : Number of clauses in original formula." << endl;
+  cout << "-nDRAT <INT> : Number of clauses in DRAT proof." << endl;
+  cout << "-nRatio <FLOAT> : Ratio determining number of clauses kept from proof in skeleton." << endl;
+  cout << "--write-skeleton : Write skeleton to standard out." << endl;
+  cout << "Options (not required):" << endl;
+  cout << "--from-LRAT : Apply ratio to count from LRAT proof, not DRAT proof." << endl;
+  cout << "--keep-units : Write units to skeleton." << endl;
+  cout << "--collect-stats : Write stats from LRAT proof and skeleton." << endl;
+  
+  
+  exit (0);
+}
+
+bool findOption(char ** start, char ** end, const string & marker) {
+  char ** position = std::find(start,end,marker);
+  if ( position == end ) return false;
+  return true;
+}
+
 int main(int argc, char* argv[]) {
-  CLI::App app{
-    "drat-parser: Parse DRAT files."
-  };
 
-  string proof_path = "";
-  app.add_option("lrat", proof_path,
-                 "Path to a file of a LRAT proof."
-  )->required()->check(CLI::ExistingFile);
+  string proof_path = commandLineParseOption(argv, argv+argc, "-proof");
 
-  int nOriginal;
-  app.add_option("Original", nOriginal,
-                 "Number of clauses in original formula."
-  )->required();
+  int nOriginal = atoi (commandLineParseOption(argv, argv+argc, "-nFormula"));
 
+  int nDRAT = atoi (commandLineParseOption(argv, argv+argc, "-nDRAT"));
 
-  int nDRAT = 0;
-  app.add_option("--nDRAT", nDRAT,
-                 "Number of clauses in the drat proof."
-  );
+  double shrinkRatio = (double) atof (commandLineParseOption(argv, argv+argc, "-nRatio"));
 
-  double shrinkRatio = 0;
-  app.add_option("--shrinkRatio", shrinkRatio,
-                 "Ratio determining number of clasues kept in skeleton."
-  );
+  bool from_lrat = findOption (argv, argv+argc, "--from-lrat");
 
-  bool from_lrat = false;
-  app.add_flag("--from-lrat", from_lrat,
-               "Use ratio from lrat (not drat) proof.");
+  bool keep_units = findOption (argv, argv+argc, "--keep-units");
 
-  bool keep_units = false;
-  app.add_flag("--keep-units", keep_units,
-               "trace units in skeleton.");
+  bool collect_stats = findOption (argv, argv+argc, "--collect-stats");
 
-  bool collect_stats = false;
-  app.add_flag("--collect-stats", collect_stats,
-               "Print clause stats.");
-
-  bool write_skeleton = false;
-  app.add_flag("--write-skeleton", write_skeleton,
-               "Write skeleton to standard out.");
+  bool write_skeleton = findOption (argv, argv+argc, "--write-skeleton");
 
   bool is_non_binary = false;
-  app.add_flag("--no-binary", is_non_binary,
-               "Parse proof in plain-text DRAT format.");
 
-  CLI11_PARSE(app, argc, argv);
+  cout << "c nOriginal " << nOriginal << " nDrat " << nDRAT << " shrinkRatio " << shrinkRatio << " " << proof_path <<  endl;
 
-  cout << "c nOriginal " << nOriginal << " nDrat " << nDRAT << " shrinkRatio " << shrinkRatio << endl;
-
-  LratStats           lrat(nOriginal);
+  LratStats lrat(nOriginal);
   PlainTextDratParser drat_parser;
 
   drat_parser.AddObserver(&lrat);

@@ -281,8 +281,8 @@ def run(name, args):
 			writeShrinkSkeleton = True
 		elif (opt == '-d'):
 			writeChunkData = True
-	print((skelPath,incLogFolder,formulaName, shrinkPercent, shrinkFromBottom, randomShrink,nChunks,config,writeShrinkSkeleton,incLogshrinkPercent,writeChunkData,outFolder,skeletonName)
-)
+#	print((skelPath,incLogFolder,formulaName, shrinkPercent, shrinkFromBottom, randomShrink,nChunks,config,writeShrinkSkeleton,incLogshrinkPercent,writeChunkData,outFolder,skeletonName)
+#)
 
 	sc = Skeleton_Constructor(skelPath,incLogFolder,formulaName, shrinkPercent, shrinkFromBottom, randomShrink,nChunks,config,writeShrinkSkeleton,incLogshrinkPercent,writeChunkData,outFolder,skeletonName)
 

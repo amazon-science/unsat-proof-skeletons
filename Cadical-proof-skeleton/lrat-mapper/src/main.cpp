@@ -5,8 +5,6 @@
 #include <unordered_set>
 #include <fstream>
 
-#include "CLI11.hpp"
-
 #include "drat_parse.h"
 
 using namespace dratparse;
@@ -150,43 +148,45 @@ private:
 
 };
 
+char* commandLineParseOption(char ** start, char ** end, const string & marker) {
+  char ** position = std::find(start,end,marker);
+  if ( position == end || ++position == end) return 0;
+  return *position;
+}
+
+void printHelp(char ** start, char ** end) {
+  char ** position = std::find(start,end,"-h");
+  if ( position == end ) return;
+  
+  cout << "lrat-mapper: Parse and combine LRAT files (in plain text)." << endl;
+  cout << "Options (all are required):" << endl;
+  cout << "-proof <FILE> : Path to LRAT proofs." << endl;
+  cout << "-map <FILE> : Path to a file of a skeleton clause map." << endl;
+  cout << "-nFormula <INT> : Number of clauses in original formula." << endl;
+  cout << "-nSkeleton <INT> : Number of clauses in skeleton." << endl;
+  cout << "-nChunks <INT> : Number of skeleton chunks." << endl;
+  
+  exit (0);
+}
+
 int main(int argc, char* argv[]) {
-  CLI::App app{
-    "drat-parser: Parse DRAT files."
-  };
+  
+  
+  printHelp(argv, argv+argc);
 
-  string proof_path = "";
-  app.add_option("drat", proof_path,
-                 "Path to a file of a DRAT proof."
-  )->required();
+  string proof_path = commandLineParseOption(argv, argv+argc, "-proof");
 
-  string map_path = "";
-  app.add_option("drat", map_path,
-                 "Path to a file of a DRAT proof."
-  )->required()->check(CLI::ExistingFile);
+  string map_path = commandLineParseOption(argv, argv+argc, "-map");
 
-  int nFormulaClauses;
-  app.add_option("nFormula", nFormulaClauses,
-                 "Number of clauses in original formula."
-  )->required();
+  int nFormulaClauses = atoi (commandLineParseOption(argv, argv+argc, "-nFormula"));
 
-    int nSkeletonClauses;
-  app.add_option("nSkeleton", nSkeletonClauses,
-                 "Number of clauses in skeleton formula."
-  )->required();
+  int nSkeletonClauses = atoi (commandLineParseOption(argv, argv+argc, "-nSkeleton"));
 
-  int nChunks;
-  app.add_option("nChunks", nChunks,
-                 "Number of skeleton chunks."
-  )->required();
+  int nChunks = atoi (commandLineParseOption(argv, argv+argc, "-nChunks"));
 
   bool is_non_binary = false;
-  app.add_flag("--no-binary", is_non_binary,
-               "Parse proof in plain-text DRAT format.");
 
-  CLI11_PARSE(app, argc, argv);
-
-  LratMap           lrat(nFormulaClauses,nSkeletonClauses,nChunks);
+  LratMap lrat(nFormulaClauses,nSkeletonClauses,nChunks);
   lrat.init_map (map_path);
 
   for (int i = 0; i < nChunks; i++) { // parse each chunk proof
@@ -198,8 +198,6 @@ int main(int argc, char* argv[]) {
       break;
     }
   }
-  
-  // lrat.Post();
 
   return 0;
 }
