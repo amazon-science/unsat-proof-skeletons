@@ -8,7 +8,7 @@ mv build/cadical build/icadical
 cd ../drat-trim
 make
 cd ../
-g++ --std=c++11 lrat-mapper/src/main.cpp -o lrat-map -Ilrat-mapper/include/ -Ilrat-mapper/third-party/cli11/
-g++ --std=c++11 lrat-skeleton/src/main.cpp -o lrat-skel -Ilrat-skeleton/include/ -Ilrat-skeleton/third-party/cli11/
+g++ --std=c++11 lrat-mapper/src/main.cpp -o lrat-map -Ilrat-mapper/include/
+g++ --std=c++11 lrat-skeleton/src/main.cpp -o lrat-skel -Ilrat-skeleton/include/ 
 
 mkdir icad-proofs icad-logs icad-forms icad-skeletons icad-out icad-out-logs

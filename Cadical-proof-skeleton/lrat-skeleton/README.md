@@ -1,24 +1,30 @@
 # Modified from Benjamin's DRAT Parser tool
 
 - Modified the file `include/drat_parse.h` to parse LRAT, i.e., DRAT with ID's and Hints
-- Modified the file `src/main.cpp` to use the LRAT parser to parse an LRAT proof, compute activity and optionally width of each clause, then print out clauses with the highest activity.
+- Modified the file `src/main.cpp` to use the LRAT parser to parse an LRAT proof, compute activity of each clause, then print out clauses with the highest activity.
 
 Width refers to the number of formula clauses marked with a backwards check from a clause in the proof.
 Activity refers to the number of times a clause from the proof is used as a hint in an LRAT step.
 
 ## Usage
 
-Build the main executable by running `g++ --std=c++11 lrat-mapper/src/main.cpp -o lrat-map -Ilrat-mapper/include/ -Ilrat-mapper/third-party/cli11/`
+Build the main executable by running `g++ --std=c++11 lrat-skeleton/src/main.cpp -o lrat-skel -Ilrat-skeleton/include/`
 
-Run with `> ./lrat-map <chunkLRATFolder> <skeletonMap> <nFormulaClauses> <nSkeletonClauses> <nChunks> > <combinedProof>`
+Run with `> ./lrat-skel <OPTIONS>`
+  
+Options (required for writing skeleton):
+* -proof <FILE> : Path to LRAT proof.
+* -nFormula <INT> : Number of clauses in original formula.
+* -nDRAT <INT> : Number of clauses in DRAT proof.
+* -nRatio <FLOAT> : Ratio determining number of clauses kept from proof in skeleton.
+* --write-skeleton : Write skeleton to standard out.
 
-* `chunkLRATFolder` - the folder containing the chunk LRAT proofs named `0.lrat` through `(nChunks-1).lrat`. This folder is typically `icad-proofs`, a default in `skeleton2lrat.py`.
-* `skeletonMap` - the file containing the mapping between skeleton clauses and LRAT ids. This mapping is typically output from a call to `drat-trim` in `skeleton2lrat.py`, to location `icad-out/<formulaName>-lrat-map.log`
-* `nFormulaClause` - number of clauses in the original formula
-* `nSkeletonClause` - number of clauses in the skeleton
-* `nChunks` - number of chunk LRAT proofs to be combined
-* `combinedProof` - file name for combined proof to be written to
-
+Options (not required):
+* --from-LRAT : Apply ratio to count from LRAT proof, not DRAT proof.
+* --keep-units : Write units to skeleton.
+* --collect-stats : Write stats from LRAT proof and skeleton.
+  
+  
 ## Description
 
 1. The `skeletonMap` is parsed, adding a mapping from skeleton clauses (indexed starting at `nFormulaClauses` + 1) to their LRAT indices within the chunk they were proven RUP.

@@ -278,9 +278,9 @@ class Skelton2Lrat():
 				# else: os.system('time python3 lrat-map.py -s '+self.formulaName+' -l '+Lfile+' -n '+str(nChunks)+' -g '+config+' -y icad-proofs/ -f '+formPath+' -p '+skelPath+' -m '+destFold+self.formulaName+'-lrat-map.log > '+destFold+self.formulaName+'.map')
 				
 
-				print('time {}lrat-map {}icad-proofs/ {}  {} {} {} > {}'.format(self.repoDirectory,self.repoDirectory,destFold+self.formulaName+'-lrat-map.log',self.nFormulaClauses, self.nSkeletonClauses, self.nChunks, fullProof))
+				print('time {}lrat-map -proof {}icad-proofs/ -map {}  -nFormula {} -nSkeleton {} -nChunks {} > {}'.format(self.repoDirectory,self.repoDirectory,destFold+self.formulaName+'-lrat-map.log',self.nFormulaClauses, self.nSkeletonClauses, self.nChunks, fullProof))
 
-				os.system('time {}lrat-map {}icad-proofs/ {}  {} {} {} > {}'.format(self.repoDirectory,self.repoDirectory,destFold+self.formulaName+'-lrat-map.log',self.nFormulaClauses, self.nSkeletonClauses, self.nChunks, fullProof))
+				os.system('time {}lrat-map -proof {}icad-proofs/ -map {}  -nFormula {} -nSkeleton {} -nChunks {} > {}'.format(self.repoDirectory,self.repoDirectory,destFold+self.formulaName+'-lrat-map.log',self.nFormulaClauses, self.nSkeletonClauses, self.nChunks, fullProof))
 
 				stop1 = time.time()
 				print("Runtime: {:.2f}s OR {}m {:.2f}s".format(stop1-start1,int((stop1-start1)/60),(stop1-start1)%60),flush=True)
