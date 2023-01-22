@@ -371,7 +371,7 @@ void printProof (struct solver *S) {
     int lastAdded = S->nClauses;
     int flag = 0;
     for (step = 0; step < S->nStep; step++) {
-      // if (step == (S->nStep - 1) && (S->startBackforce != 0)) break;
+      if (step == (S->nStep - 1) && (S->startBackforce != 0)) break; // prevent printing 0..
       long ad = S->proof[step];
       int *lemmas = S->DB + (ad >> INFOBITS);
       if ((ad & 1) == 0) {

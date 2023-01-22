@@ -1,6 +1,6 @@
 /************************************************************************************[lrat-check.c]
-Copyright (c) 2017-2021 Marijn Heule, Carnegie Mellon University
-Last edit: September 12, 2021
+Copyright (c) 2017-2022 Marijn Heule, Carnegie Mellon University
+Last edit: October 19, 2022
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
 associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -40,8 +40,11 @@ void usage(char *name) {
   exit(0);
 }
 
-//typedef long long ltype;
-typedef int ltype;
+#ifdef LONGTYPE
+  typedef long long ltype;
+#else
+  typedef int ltype;
+#endif
 typedef int mtype;
 
 ltype added_clauses = 0;
@@ -56,7 +59,8 @@ int maxBucket;
 int *clsList, clsAlloc, clsLast;
 int *table, tableSize, tableAlloc, maskAlloc;
 int *litList, litCount, litAlloc;
-int *inBucket, *topTable, topAlloc;
+int *inBucket;
+int *topTable, topAlloc;
 
 int  getType   (int* list) { return list[1]; }
 int  getIndex  (int* list) { return list[0]; }
@@ -83,7 +87,6 @@ void printClause (int* clause) {
 int checkRedundancy (int pivot, int start, int *hints, ltype thisMask, int print) {
   int res = abs(*hints++);
   assert (start <= res);
-
 
   if (print) printf ("c check redundancy res: %i pivot: %i start: %i\n", res, printLit(pivot), start);
   if (res != 0) {
@@ -129,8 +132,6 @@ int checkClause (int* list, int size, int* hints, int print) {
   now++;
   int pivot = convertLit (list[0]);
 
-
-
   int RATs = getRATs (hints + 1); // the number of negated hints
   for (int i = 0; i < size; i++) { // assign all literals in the clause to false
     int clit = convertLit (list[i]);
@@ -145,6 +146,7 @@ int checkClause (int* list, int size, int* hints, int print) {
     mask [clit] = now + RATs; } // mark all literals in lemma with mask
 
   int res = checkRedundancy (pivot, 0, hints, now + RATs, print);
+
   if (res == CONFLICT) { return SUCCESS; }
   if (res == FAILED  ) { return FAILED;  }
 
@@ -152,6 +154,7 @@ int checkClause (int* list, int size, int* hints, int print) {
   int start = intro[pivot ^ 1];
 
   if (RATs == 0)      {
+    if (res == SUCCESS) return FAILED; // No RAT and no conflict is FAILED
     if (print) printf ("c start %i first %i\n", start, -first[0]);
     if (start != 0) return FAILED;
     return SUCCESS; }
@@ -164,7 +167,6 @@ int checkClause (int* list, int size, int* hints, int print) {
         if (clit == (pivot^1)) return FAILED; } }
     start++; }
   intro[pivot ^ 1] = -first[0];
-
 
   if (start == 0) return SUCCESS;
   while (1) {
@@ -330,8 +332,10 @@ int parseLine (FILE* file, int mode, int line) {
     int index;
     int zeros = 2;
     tmp = fscanf (file, " %i ", &index);
+//    printf ("%lli ", index);
+//    assert (index > 0);
     if (tmp == 0 || tmp == EOF) return 0;
-    addLit (index);
+    addLit ((int) index);
 
     tmp = fscanf (file, " d %i ", &lit);
     if (tmp == 1) {
@@ -361,7 +365,8 @@ int main (int argc, char** argv) {
   if (argc < 3)
      usage(argv[0]);
   struct timeval start_time, finish_time;
-  int return_code = 0;
+  int found_error = 0; // encountered an error?
+  int found_empty_clause = 0; // encountered derivation of empty clause?
   gettimeofday(&start_time, NULL);
   now = 0, clsLast = 0;
 
@@ -448,17 +453,30 @@ int main (int argc, char** argv) {
       else {
         printf("c failed while checking clause: "); printClause (litList + 2);
         checkClause (litList + 2, length, hints, 1);
-        printf("c NOT VERIFIED\n");
-        return_code = 1;
+        found_error = 1;
         break;
       }
       if (length == 0)
-        printf ("c VERIFIED\n");
+        found_empty_clause = 1;
     }
     else {
       printf ("c failed type\n");
-      return_code = 1;
+      found_error = 1;
+      break;
     }
+  }
+
+  int return_code;
+  if (found_empty_clause && !found_error) {
+    printf ("c VERIFIED\n");
+    return_code = 0;
+  } else {
+    if (!found_error) {
+      // print why the proof failed
+      printf ("c checking ended before empty clause was found\n");
+    }
+    printf ("c NOT VERIFIED\n");
+    return_code = 1;
   }
 
   printf ("c allocated %i %i %i\n", maxBucket, tableAlloc, litAlloc);
