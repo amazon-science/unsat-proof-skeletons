@@ -41,6 +41,8 @@ public:
     if (idx >= stepIdxMap.size() || stepIdxMap[idx] == 0) {
       add_map (idx, idx);
     }
+    
+    if (lits[0] == 0 && hints.size() == 0) return;
 
     cout << idx << " ";
     for(auto literal : lits) cout << literal << " ";
@@ -100,7 +102,7 @@ public:
 
 
   bool early_conflict (int i) {
-    // cout << lastMapped << " " << lastSkeleton[i] << endl;
+//    cout << "c early_conflict " << lastMapped << " " << lastSkeleton[i] << endl;
     return (emptyClause || lastMapped < lastSkeleton[i]);
   }
 
@@ -195,6 +197,7 @@ int main(int argc, char* argv[]) {
     string temp = proof_path + std::to_string(i) + ".lrat";
     drat_parser.Parse(temp);
     if (lrat.early_conflict(i)) {
+//      cout << "c early conflict at chunk " << i << endl;
       break;
     }
   }
