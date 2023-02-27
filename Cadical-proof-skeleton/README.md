@@ -9,8 +9,6 @@ Drat Proof Compression and Reconstruction
 
 In this work we aim to compress DRAT proofs for unsatisfiable Boolean formulas. We do this by generating a proof skeleton, which represents a fraction of the clauses in the original proof. With this skeleton, we recompute a complete proof for the original formula. For the technique to be useful, the recomputation should take less time than solving the original formula.
 
-Refer to the [wiki](https://w.amazon.com/bin/view/ARG/ATS-Science/Proof-Compression/) for a more detailed explanation.
-
 This repository contains tools to execute the following pipeline, given an input formula:
 
 1. Trace a proof skeleton
