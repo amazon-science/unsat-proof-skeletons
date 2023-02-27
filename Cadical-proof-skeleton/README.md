@@ -2,7 +2,7 @@
 
 
 This is an AWS-ARG-ATS-Science intern project developed by the intern
-Joseph Reeves (jsreeves@) and manager Benjamin Kiesl (benkiesl@).
+Joseph Reeves (jsreeves@).
 
 Drat Proof Compression and Reconstruction
 ===============================================================================
